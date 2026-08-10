@@ -8,6 +8,9 @@ on:
 jobs:
  build-and-deploy:
    runs-on: ubuntu-latest
+   environment:
+     name: github-pages
+     url: ${{ steps.deploy-pages.outputs.page_url }}
    permissions:
      contents: read
      pages: write      # GitHub Pagesへの書き込み権限
@@ -42,4 +45,5 @@ jobs:
         path: 'build' # Evidenceのデフォルトビルド出力先
 
     - name: Deploy to GitHub Pages
+      id: deploy-pages
       uses: actions/deploy-pages@v4
