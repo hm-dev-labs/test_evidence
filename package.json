@@ -1,15 +1,17 @@
 {
   "name": "my-evidence-project",
   "version": "0.0.1",
+
   "scripts": {
-    "build": "evidence build",
-    "build:strict": "evidence build:strict",
-    "dev": "evidence dev --open /",
-    "test": "evidence build",
-    "sources": "evidence sources",
-    "sources:strict": "evidence sources --strict",
-    "preview": "evidence preview"
-  },
+      "build": "EVIDENCE_BUILD_DIR=./build/test_evidence evidence build",
+      "build:strict": "EVIDENCE_BUILD_DIR=./build/test_evidence evidence build:strict",
+      "dev": "evidence dev --open /",
+      "test": "EVIDENCE_BUILD_DIR=./build/test_evidence evidence build",
+      "sources": "evidence sources",
+      "sources:strict": "evidence sources --strict",
+      "preview": "evidence preview"
+    },
+
   "engines": {
     "npm": ">=7.0.0",
     "node": ">=18.0.0"
