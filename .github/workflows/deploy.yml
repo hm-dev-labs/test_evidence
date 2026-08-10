@@ -1,42 +1,45 @@
 name: Deploy Evidence to GitHub Pages
 
 on:
-  push:
-    branches:
-      - main # mainブランチにプッシュされたら実行
+ push:
+   branches:
+    - main # mainブランチにプッシュされたら実行
 
 jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pages: write      # GitHub Pagesへの書き込み権限
-      id-token: write
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+ build-and-deploy:
+   runs-on: ubuntu-latest
+   permissions:
+     contents: read
+     pages: write      # GitHub Pagesへの書き込み権限
+     id-token: write
+   steps:
+    - name: Checkout
+      uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'npm'
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+        cache: 'npm'
 
-      - name: Install dependencies
-        run: npm install
+    - name: Install dependencies
+      run: npm install
 
-      - name: Build Evidence
-        run: npm run build
-        env:
-          # もし接続情報などをシークレットで登録している場合はここに記述
-          # EVIDENCE_SOURCE__...: ${{ secrets.YOUR_SECRET }}
-          # 基本的にはduckdbファイルがリポジトリに含まれていれば不要
-          BASE_PATH: /${{ github.event.repository.name }}
+    - name: Generate sources
+      run: npm run sources
 
-      - name: Upload Pages Artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: 'build' # Evidenceのデフォルトビルド出力先
+    - name: Build Evidence
+      run: npm run build
+      env:
+        # もし接続情報などをシークレットで登録している場合はここに記述
+        # EVIDENCE_SOURCE__...: ${{ secrets.YOUR_SECRET }}
+        # 基本的にはduckdbファイルがリポジトリに含まれていれば不要
+        BASE_PATH: /${{ github.event.repository.name }}
 
-      - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v4
+    - name: Upload Pages Artifact
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: 'build' # Evidenceのデフォルトビルド出力先
+
+    - name: Deploy to GitHub Pages
+      uses: actions/deploy-pages@v4
