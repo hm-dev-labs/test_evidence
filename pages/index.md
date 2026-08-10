@@ -10,7 +10,7 @@ title: Welcome to Evidence
 ```sql categories
   select
       category
-  from needful_things.orders
+  from test_data.test_data
   group by category
 ```
 
@@ -30,7 +30,7 @@ title: Welcome to Evidence
       date_trunc('month', order_datetime) as month,
       sum(sales) as sales_usd,
       category
-  from needful_things.orders
+  from test_data.test_data
   where category like '${inputs.category.value}'
   and date_part('year', order_datetime) like '${inputs.year.value}'
   group by all
@@ -47,10 +47,14 @@ title: Welcome to Evidence
 
 ```sql raw_data
   select *
-  from needful_things.orders
+  from test_data.test_data
 ```
 
 <DataTable data={raw_data}/>
+
+
+
+
 
 
 ## What's Next?
