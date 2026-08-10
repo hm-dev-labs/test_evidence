@@ -42,7 +42,7 @@ jobs:
     - name: Upload Pages Artifact
       uses: actions/upload-pages-artifact@v3
       with:
-        path: 'build' # Evidenceのデフォルトビルド出力先
+        path: 'build/test_evidence' # Evidenceのデフォルトビルド出力先
 
     - name: Deploy to GitHub Pages
       id: deploy-pages
