@@ -1,0 +1,21 @@
+[tools]
+# Node.js: Evidence.dev の動作要件 (>=18)。GitHub Actions と揃える
+node = "20"
+# DuckDB CLI: ローカルでのデータ確認・クエリに使用
+duckdb = "latest"
+
+[tasks.dev]
+description = "開発サーバー起動"
+run = "npm run dev"
+
+[tasks.build]
+description = "プロダクションビルド"
+run = "npm run build"
+
+[tasks.install]
+description = "依存パッケージインストール"
+run = "npm install"
+
+[tasks.sources]
+description = "データソース取得"
+run = "npm run sources"
