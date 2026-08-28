@@ -7,4 +7,6 @@ static/data
 *.options.yaml
 .vscode/settings.json
 .env
+.env.*
+!.env.example
 .evidence/meta
