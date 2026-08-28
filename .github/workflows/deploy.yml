@@ -31,10 +31,11 @@ jobs:
     - name: Build Evidence
       run: npm run build
       env:
-        # もし接続情報などをシークレットで登録している場合はここに記述
-        # EVIDENCE_SOURCE__...: ${{ secrets.YOUR_SECRET }}
-        # 基本的にはduckdbファイルがリポジトリに含まれていれば不要
         BASE_PATH: /${{ github.event.repository.name }}
+        VITE_GTM_CONTAINER_ID: ${{ secrets.VITE_GTM_CONTAINER_ID }}
+        VITE_GA4_ENV: ${{ secrets.VITE_GA4_ENV }}
+        VITE_GA4_PROMOTION_ID: ${{ secrets.VITE_GA4_PROMOTION_ID }}
+        VITE_GA4_REPORT_DEF_ID: ${{ secrets.VITE_GA4_REPORT_DEF_ID }}
 
     - name: Upload Pages Artifact
       uses: actions/upload-pages-artifact@v3
