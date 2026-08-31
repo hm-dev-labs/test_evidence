@@ -38,6 +38,11 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
           set -euo pipefail
+          # 並列実行前に1回だけ npx でwranglerを解決しておく。
+          # 解決前に並列で npx wrangler を叩くと、パッケージ解決処理が競合し、
+          # 一部のプロセスで環境変数(CLOUDFLARE_API_TOKEN等)が正しく渡らないことがあるため。
+          npx wrangler --version
+
           # wrangler r2 object put に再帰アップロードのオプションはないため、1ファイルずつアップロードする。
           # xargs -P で並列実行し、逐次ループより体感時間を縮める。
           upload_file() {
