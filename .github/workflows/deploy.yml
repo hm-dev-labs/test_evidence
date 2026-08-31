@@ -1,4 +1,4 @@
-name: Deploy Evidence to Cloudflare R2 (via Worker proxy)
+giname: Deploy Evidence to Cloudflare R2 (via Worker proxy)
 
 on:
  push:
