@@ -3,7 +3,7 @@ appearance:
   switcher: true
 
 deployment:
-  basePath: /test_evidence
+  basePath: ""
 
 theme:
   colorPalettes:
