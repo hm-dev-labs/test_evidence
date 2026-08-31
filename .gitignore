@@ -10,3 +10,7 @@ static/data
 .env.*
 !.env.example
 .evidence/meta
+
+.wrangler
+.dev.vars
+.dev.vars.*

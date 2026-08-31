@@ -1,4 +1,4 @@
-name: Deploy Evidence to GitHub Pages
+giname: Deploy Evidence to Cloudflare R2 (via Worker proxy)
 
 on:
  push:
@@ -8,13 +8,6 @@ on:
 jobs:
  build-and-deploy:
    runs-on: ubuntu-latest
-   environment:
-     name: github-pages
-     url: ${{ steps.deploy-pages.outputs.page_url }}
-   permissions:
-     contents: read
-     pages: write      # GitHub Pagesへの書き込み権限
-     id-token: write
    steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -31,17 +24,48 @@ jobs:
     - name: Build Evidence
       run: npm run build
       env:
-        BASE_PATH: /${{ github.event.repository.name }}
+        # Workerがルートパスで配信するため BASE_PATH は不要
+        # （evidence.config.yaml の deployment.basePath も空に設定済み）
         VITE_GTM_CONTAINER_ID: ${{ vars.VITE_GTM_CONTAINER_ID }}
         VITE_GA4_ENV: ${{ vars.VITE_GA4_ENV }}
         VITE_GA4_PROMOTION_ID: ${{ vars.VITE_GA4_PROMOTION_ID }}
         VITE_GA4_REPORT_DEF_ID: ${{ vars.VITE_GA4_REPORT_DEF_ID }}
 
-    - name: Upload Pages Artifact
-      uses: actions/upload-pages-artifact@v3
-      with:
-        path: 'build/test_evidence' # Evidenceのデフォルトビルド出力先
+    - name: Sync build output to R2
+      working-directory: build/test_evidence
+      env:
+        CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      run: |
+       set -euo pipefail
+       # wrangler r2 object put に再帰アップロードのオプションはないため、1ファイルずつアップロードする。
+       # xargs -P で並列実行し、逐次ループより体感時間を縮める。
+       upload_file() {
+         local file="$1"
+         local key="${file#./}"
+         local content_type
+         case "$key" in
+           *.html) content_type="text/html; charset=utf-8" ;;
+           *.css) content_type="text/css" ;;
+           *.js) content_type="application/javascript" ;;
+           *.json) content_type="application/json" ;;
+           *.wasm) content_type="application/wasm" ;;
+           *.svg) content_type="image/svg+xml" ;;
+           *.png) content_type="image/png" ;;
+           *.jpg|*.jpeg) content_type="image/jpeg" ;;
+           *.parquet) content_type="application/octet-stream" ;;
+           *) content_type="application/octet-stream" ;;
+         esac
+         npx wrangler r2 object put "test-evidence-assets/${key}" --file="${file}" --content-type="${content_type}" --remote
+       }
+       export -f upload_file
 
-    - name: Deploy to GitHub Pages
-      id: deploy-pages
-      uses: actions/deploy-pages@v4
+       find . -type f -print0 | xargs -0 -P 8 -I {} bash -c 'upload_file "$@"' _ {}
+
+    - name: Deploy Worker
+      uses: cloudflare/wrangler-action@v3
+      with:
+        apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        workingDirectory: worker
+        command: deploy

@@ -1,17 +1,15 @@
 {
   "name": "my-evidence-project",
   "version": "0.0.1",
-
   "scripts": {
-      "build": "EVIDENCE_BUILD_DIR=./build/test_evidence evidence build",
-      "build:strict": "EVIDENCE_BUILD_DIR=./build/test_evidence evidence build:strict",
-      "dev": "evidence dev --open /",
-      "test": "EVIDENCE_BUILD_DIR=./build/test_evidence evidence build",
-      "sources": "evidence sources",
-      "sources:strict": "evidence sources --strict",
-      "preview": "evidence preview"
-    },
-
+    "build": "cross-env EVIDENCE_BUILD_DIR=./build/test_evidence evidence build",
+    "build:strict": "cross-env EVIDENCE_BUILD_DIR=./build/test_evidence evidence build:strict",
+    "dev": "evidence dev --open /",
+    "test": "cross-env EVIDENCE_BUILD_DIR=./build/test_evidence evidence build",
+    "sources": "evidence sources",
+    "sources:strict": "evidence sources --strict",
+    "preview": "evidence preview"
+  },
   "engines": {
     "npm": ">=7.0.0",
     "node": ">=18.0.0"
@@ -38,5 +36,8 @@
     "trim@<0.0.3": ">0.0.3",
     "sqlite3": "5.1.5",
     "axios": "^1.7.4"
+  },
+  "devDependencies": {
+    "cross-env": "^10.1.0"
   }
 }
